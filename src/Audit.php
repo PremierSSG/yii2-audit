@@ -544,6 +544,7 @@ class Audit extends Module
      */
     protected function routeMatches($route, $list)
     {
+        $route = (string) $route;
         $list = ArrayHelper::toArray($list);
         foreach ($list as $compare) {
             $len = strlen($compare);
