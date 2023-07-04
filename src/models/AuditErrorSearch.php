@@ -62,7 +62,10 @@ class AuditErrorSearch extends AuditError
         $query->andFilterWhere(['like', 'message', $this->message]);
         $query->andFilterWhere(['code' => $this->code]);
         $query->andFilterWhere(['hash' => $this->hash]);
-        $query->andFilterWhere(['like', 'created', $this->created]);
+        // $query->andFilterWhere(['like', 'created', $this->created]);
+        if ($this->created) {
+            $query->andFilterWhere(['between', 'created', $this->created, date('Y-m-d', strtotime($this->created . ' +1 day'))]);
+        }
 
         return $dataProvider;
     }

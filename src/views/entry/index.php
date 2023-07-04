@@ -2,7 +2,10 @@
 
 use bedezign\yii2\audit\Audit;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
+use dosamigos\datepicker\DatePicker;
+use InnovarMedia\users\models\User;
 
 use bedezign\yii2\audit\models\AuditEntrySearch;
 
@@ -27,6 +30,12 @@ $this->params['breadcrumbs'][] = $this->title;
                 'attribute' => 'user_id',
                 'label' => Yii::t('audit', 'User'),
                 'class' => 'yii\grid\DataColumn',
+                'filter' => Html::activeDropDownList(
+                    $searchModel,
+                    'user_id',
+                  ArrayHelper::merge([''=>''], ArrayHelper::map(User::find()->orderBy('email')->all(), 'id', 'email')),
+                  ['class' => 'form-control']
+                ),
                 'value' => function ($data) {
                     return Audit::getInstance()->getUserIdentifier($data->user_id);
                 },
@@ -40,7 +49,7 @@ $this->params['breadcrumbs'][] = $this->title;
             [
                 'filter' => [1 => \Yii::t('audit', 'Yes'), 0 => \Yii::t('audit', 'No')],
                 'attribute' => 'ajax',
-                'value' => function($data) {
+                'value' => function ($data) {
                     return $data->ajax ? Yii::t('audit', 'Yes') : Yii::t('audit', 'No');
                 },
             ],
@@ -66,27 +75,27 @@ $this->params['breadcrumbs'][] = $this->title;
                 'format' => 'shortsize',
                 'contentOptions' => ['class' => 'text-right', 'width' => '100px'],
             ],
-            [
-                'attribute' => 'trails',
-                'value' => function ($data) {
-                    return $data->trails ? count($data->trails) : '';
-                },
-                'contentOptions' => ['class' => 'text-right'],
-            ],
-            [
-                'attribute' => 'mails',
-                'value' => function ($data) {
-                    return $data->mails ? count($data->mails) : '';
-                },
-                'contentOptions' => ['class' => 'text-right'],
-            ],
-            [
-                'attribute' => 'javascripts',
-                'value' => function ($data) {
-                    return $data->javascripts ? count($data->javascripts) : '';
-                },
-                'contentOptions' => ['class' => 'text-right'],
-            ],
+            // [
+            //     'attribute' => 'trails',
+            //     'value' => function ($data) {
+            //         return $data->trails ? count($data->trails) : '';
+            //     },
+            //     'contentOptions' => ['class' => 'text-right'],
+            // ],
+            // [
+            //     'attribute' => 'mails',
+            //     'value' => function ($data) {
+            //         return $data->mails ? count($data->mails) : '';
+            //     },
+            //     'contentOptions' => ['class' => 'text-right'],
+            // ],
+            // [
+            //     'attribute' => 'javascripts',
+            //     'value' => function ($data) {
+            //         return $data->javascripts ? count($data->javascripts) : '';
+            //     },
+            //     'contentOptions' => ['class' => 'text-right'],
+            // ],
             [
                 'attribute' => 'errors',
                 'value' => function ($data) {
@@ -96,6 +105,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created',
+                'filter' => DatePicker::widget([
+                  'model' => $searchModel,
+                  'attribute' => 'created',
+                  'addon' => '',
+                  'clientOptions' => [
+                    'autoClose' => true,
+                    'format' => 'yyyy-mm-dd',
+                  ],
+                ]),
                 'options' => ['width' => '150px'],
             ],
         ],

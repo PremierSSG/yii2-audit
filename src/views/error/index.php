@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use dosamigos\datepicker\DatePicker;
 
 use bedezign\yii2\audit\models\AuditErrorSearch;
 
@@ -64,6 +65,15 @@ $this->params['breadcrumbs'][] = $this->title;
             ],
             [
                 'attribute' => 'created',
+                'filter' => DatePicker::widget([
+                  'model' => $searchModel,
+                  'attribute' => 'created',
+                  'addon' => '',
+                  'clientOptions' => [
+                    'autoClose' => true,
+                    'format' => 'yyyy-mm-dd',
+                  ],
+                ]),
                 'options' => ['width' => '150px'],
             ],
         ],
