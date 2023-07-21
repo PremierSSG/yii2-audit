@@ -16,66 +16,72 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="audit-error">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+	<h1><?= Html::encode($this->title) ?></h1>
 
-    <?= GridView::widget([
-        'dataProvider' => $dataProvider,
-        'filterModel' => $searchModel,
-        'columns' => [
-            ['class' => 'yii\grid\ActionColumn', 'template' => '{view}'],
-            [
-                'attribute' => 'id',
-                'options' => [
-                    'width' => '80px',
-                ],
-            ],
-            [
-                'attribute' => 'entry_id',
-                'class' => 'yii\grid\DataColumn',
-                'value' => function ($data) {
-                    return $data->entry_id ? Html::a($data->entry_id, ['entry/view', 'id' => $data->entry_id]) : '';
-                },
-                'format' => 'raw',
-            ],
-            [
-                'filter' => AuditErrorSearch::messageFilter(),
-                'attribute' => 'message',
-            ],
-            [
-                'attribute' => 'code',
-                'options' => [
-                    'width' => '80px',
-                ],
-            ],
-            [
-                'filter' => AuditErrorSearch::fileFilter(),
-                'attribute' => 'file',
-            ],
-            [
-                'attribute' => 'line',
-                'options' => [
-                    'width' => '80px',
-                ],
-            ],
-            [
-                'attribute' => 'hash',
-                'options' => [
-                    'width' => '100px',
-                ],
-            ],
-            [
-                'attribute' => 'created',
-                'filter' => DatePicker::widget([
-                  'model' => $searchModel,
-                  'attribute' => 'created',
-                  'addon' => '',
-                  'clientOptions' => [
-                    'autoClose' => true,
-                    'format' => 'yyyy-mm-dd',
-                  ],
-                ]),
-                'options' => ['width' => '150px'],
-            ],
-        ],
-    ]); ?>
+	<?= GridView::widget([
+		'dataProvider' => $dataProvider,
+		'filterModel' => $searchModel,
+		'columns' => [
+			['class' => 'yii\grid\ActionColumn', 'template' => '{view}'],
+			[
+				'attribute' => 'id',
+				'options' => [
+					'width' => '80px',
+				],
+			],
+			[
+				'attribute' => 'entry_id',
+				'class' => 'yii\grid\DataColumn',
+				'value' => function ($data) {
+					return $data->entry_id ? Html::a($data->entry_id, ['entry/view', 'id' => $data->entry_id]) : '';
+				},
+				'format' => 'raw',
+			],
+			[
+				// 'filter' => AuditErrorSearch::messageFilter(),
+				'attribute' => 'message',
+				'options' => [
+					'style' => 'word-break: break-all; max-width: 300px;',
+				],
+				'contentOptions' => ['style' => 'word-break: break-all;'], // For TD				
+
+			],
+			[
+				'attribute' => 'code',
+				'options' => [
+					'width' => '80px',
+				],
+			],
+			[
+				// 'filter' => AuditErrorSearch::fileFilter(),
+				'attribute' => 'file',
+				'contentOptions' => ['style' => 'word-break: break-all; min-width: 100px;'], // For TD				
+			],
+			[
+				'attribute' => 'line',
+				'options' => [
+					'width' => '80px',
+				],
+			],
+			[
+				'attribute' => 'hash',
+				'options' => [
+					'width' => '100px',
+				],
+			],
+			[
+				'attribute' => 'created',
+				'filter' => DatePicker::widget([
+					'model' => $searchModel,
+					'attribute' => 'created',
+					'addon' => '',
+					'clientOptions' => [
+						'autoClose' => true,
+						'format' => 'yyyy-mm-dd',
+					],
+				]),
+				'options' => ['width' => '150px'],
+			],
+		],
+	]); ?>
 </div>
