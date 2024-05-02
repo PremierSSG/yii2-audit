@@ -2,6 +2,7 @@
 
 use yii\helpers\Html;
 use yii\grid\GridView;
+use dosamigos\datepicker\DatePicker;
 
 use bedezign\yii2\audit\models\AuditErrorSearch;
 
@@ -15,7 +16,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="audit-error">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+	<h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -44,7 +45,8 @@ $this->params['breadcrumbs'][] = $this->title;
                 ],
             ],
             [
-                'filter' => AuditErrorSearch::fileFilter(),
+                'filter' => 'file',
+                //'filter' => AuditErrorSearch::fileFilter(),
                 'attribute' => 'file',
             ],
             [

@@ -21,7 +21,7 @@ class AuditEntrySearch extends AuditEntry
     {
         // only fields in rules() are searchable
         return [
-            [['id', 'user_id', 'ip', 'created', 'duration', 'memory_max', 'route', 'request_method', 'ajax'], 'safe'],
+            [['id', 'user_id', 'ip', 'created', 'duration', 'memory_max', 'route', 'request_method', 'ajax', 'hasErrors'], 'safe'],
         ];
     }
 
@@ -64,7 +64,9 @@ class AuditEntrySearch extends AuditEntry
         $query->andFilterWhere(['route' => $this->route]);
         $query->andFilterWhere(['request_method' => $this->request_method]);
         $query->andFilterWhere(['ajax' => $this->ajax]);
-        $query->andFilterWhere(['duration' => $this->duration]);
+        if ($this->duration) {
+            $query->andFilterCompare('duration', '>=' . $this->duration);
+        }
         $query->andFilterWhere(['memory_max' => $this->memory_max]);
         $query->andFilterWhere(['like', DbHelper::convertIfNeeded(AuditEntry::class, 'created', 'text'), $this->created]);
         $query->with(['linkedErrors', 'javascripts']);

@@ -256,7 +256,9 @@ class Audit extends Module
         $ignoreActions = $isError ? $this->ignoreErrorActions : $this->ignoreActions;
 
         $uniqueId = ArrayHelper::getValue($event->action, 'uniqueId');
-
+        if (!$uniqueId) {
+          return false;
+        }
         if (!empty($trackActions) && !$this->routeMatches($uniqueId, $trackActions)) {
             return false;
         }
@@ -564,6 +566,7 @@ class Audit extends Module
      */
     protected function routeMatches($route, $list)
     {
+        $route = (string) $route;
         $list = ArrayHelper::toArray($list);
         foreach ($list as $compare) {
             $len = strlen($compare);

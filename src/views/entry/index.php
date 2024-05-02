@@ -2,7 +2,9 @@
 
 use bedezign\yii2\audit\Audit;
 use yii\helpers\Html;
+use yii\helpers\ArrayHelper;
 use yii\grid\GridView;
+use InnovarMedia\users\models\User;
 use bedezign\yii2\audit\models\AuditEntrySearch;
 
 /* @var $this yii\web\View */
@@ -15,7 +17,7 @@ $this->params['breadcrumbs'][] = $this->title;
 ?>
 <div class="audit-entry-index">
 
-    <h1><?= Html::encode($this->title) ?></h1>
+	<h1><?= Html::encode($this->title) ?></h1>
 
     <?= GridView::widget([
         'dataProvider' => $dataProvider,
@@ -24,13 +26,19 @@ $this->params['breadcrumbs'][] = $this->title;
             ['class' => 'yii\grid\ActionColumn', 'template' => '{view}'],
             'id',
             [
-                'attribute' => 'user_id',
-                'label' => Yii::t('audit', 'User'),
-                'class' => 'yii\grid\DataColumn',
-                'value' => function ($data) {
-                    return Audit::getInstance()->getUserIdentifier($data->user_id);
-                },
-                'format' => 'raw',
+              'attribute' => 'user_id',
+              'label' => Yii::t('audit', 'User'),
+              'class' => 'yii\grid\DataColumn',
+              'filter' => Html::activeDropDownList(
+                $searchModel,
+                'user_id',
+                ArrayHelper::merge(['' => ''], ArrayHelper::map(User::find()->orderBy('email')->all(), 'id', 'email')),
+                ['class' => 'form-control']
+              ),
+              'value' => function ($data) {
+                return Audit::getInstance()->getUserIdentifier($data->user_id);
+              },
+              'format' => 'raw',
             ],
             'ip',
             [
