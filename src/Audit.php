@@ -117,6 +117,11 @@ class Audit extends Module
     public $userIdCallback = false;
 
     /**
+     * @var string The callback to get a user id.
+     */
+    public $userIpCallback = false;
+
+    /**
      * @var string Will be called to translate text in the user filter into a (or more) user id's
      */
     public $userFilterCallback = false;
@@ -176,8 +181,13 @@ class Audit extends Module
     // Things required to keep the module yii2-debug compatible
     /* @see \yii\debug\Module::$traceLine (since 2.0.7) */
     public $traceLine = \yii\debug\Module::DEFAULT_IDE_TRACELINE;
-     /* @see \yii\debug\Module::$tracePathMappings (since 2.1.6) */
+    /* @see \yii\debug\Module::$tracePathMappings (since 2.1.6) */
     public $tracePathMappings = [];
+
+    /**
+     * Controls whether the diff output for trails will be pretty printed if the value is json or not
+    */
+    public $enablePrettyDiffForTrails = false;
 
     /**
      * @var array
@@ -245,10 +255,10 @@ class Audit extends Module
         $trackActions = $isError ? $this->trackErrorActions : $this->trackActions;
         $ignoreActions = $isError ? $this->ignoreErrorActions : $this->ignoreActions;
 
-		$uniqueId = ArrayHelper::getValue($event->action, 'uniqueId');
-		if (!$uniqueId) {
-			return false;
-		}
+        $uniqueId = ArrayHelper::getValue($event->action, 'uniqueId');
+        if (!$uniqueId) {
+          return false;
+        }
         if (!empty($trackActions) && !$this->routeMatches($uniqueId, $trackActions)) {
             return false;
         }
@@ -354,9 +364,9 @@ class Audit extends Module
         // This code assumes the audit module is already loaded and can thus look for a derived instance
         $loadedModules = Yii::$app->loadedModules;
         foreach ($loadedModules as $module) {
-             if ($module instanceof self) {
-                 return self::$_me = $module;
-             }
+            if ($module instanceof self) {
+                return self::$_me = $module;
+            }
         }
 
         // If we're still here, fall back onto the default implementation
@@ -413,6 +423,18 @@ class Audit extends Module
             return call_user_func($this->userIdCallback);
         }
         return (Yii::$app instanceof \yii\web\Application && Yii::$app->user) ? Yii::$app->user->id : null;
+    }
+
+    /**
+     * @return int|mixed|null|string
+     */
+    public function getUserIp()
+    {
+        if ($this->userIpCallback && is_callable($this->userIpCallback)) {
+            return call_user_func($this->userIpCallback);
+        }
+
+        return Yii::$app->getRequest()->getUserIP();
     }
 
     /**
@@ -486,12 +508,12 @@ class Audit extends Module
 
         // We now need one more iteration to add core classes to the panels added via the merge, if needed
         array_walk($this->panels, function(&$value, $key) {
-           if (!isset($value['class'])) {
-               if (isset($this->_corePanels[$key]))
-                   $value = ArrayHelper::merge($value, $this->_corePanels[$key]);
-               else
-                   throw new InvalidConfigException("Invalid configuration for '$key'. No 'class' specified.");
-           }
+            if (!isset($value['class'])) {
+                if (isset($this->_corePanels[$key]))
+                    $value = ArrayHelper::merge($value, $this->_corePanels[$key]);
+                else
+                    throw new InvalidConfigException("Invalid configuration for '$key'. No 'class' specified.");
+            }
         });
     }
 

@@ -3,6 +3,7 @@
 namespace bedezign\yii2\audit\models;
 
 use bedezign\yii2\audit\Audit;
+use bedezign\yii2\audit\components\DbHelper;
 use yii\base\Model;
 use yii\data\ActiveDataProvider;
 use yii\db\ActiveQuery;
@@ -40,6 +41,7 @@ class AuditEntrySearch extends AuditEntry
     public function search($params)
     {
         $query = AuditEntry::find();
+        $query->select($this->safeAttributes());
 
         $dataProvider = new ActiveDataProvider([
             'query' => $query,
@@ -66,10 +68,7 @@ class AuditEntrySearch extends AuditEntry
             $query->andFilterCompare('duration', '>=' . $this->duration);
         }
         $query->andFilterWhere(['memory_max' => $this->memory_max]);
-        // $query->andFilterWhere(['like', 'created', $this->created]);
-        if ($this->created) {
-            $query->andFilterWhere(['between', 'created', $this->created, date('Y-m-d', strtotime($this->created . ' +1 day'))]);
-        }
+        $query->andFilterWhere(['like', DbHelper::convertIfNeeded(AuditEntry::class, 'created', 'text'), $this->created]);
         $query->with(['linkedErrors', 'javascripts']);
 
         return $dataProvider;
@@ -107,11 +106,9 @@ class AuditEntrySearch extends AuditEntry
      */
     protected function filterUserId($userId, $query)
     {
-        if (strlen($userId)) {
+        if (!empty($userId)) {
             if (!is_numeric($userId) && $callback = Audit::getInstance()->userFilterCallback) {
                 $userId = call_user_func($callback, $userId);
-            } else {
-                $userId = intval($userId) ?: 0;
             }
             $query->andWhere(['user_id' => $userId]);
         }
