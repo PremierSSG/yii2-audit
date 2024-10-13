@@ -21,7 +21,7 @@ class AuditEntrySearch extends AuditEntry
     {
         // only fields in rules() are searchable
         return [
-            [['id', 'user_id', 'ip', 'created', 'duration', 'memory_max', 'route', 'request_method', 'ajax', 'hasErrors'], 'safe'],
+            [['id', 'user_id', 'ip', 'created', 'duration', 'memory_max', 'route', 'request_method', 'ajax'], 'safe'],
         ];
     }
 
